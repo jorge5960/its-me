@@ -1,0 +1,29 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>It's me</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+
+        <img #img [src]="imgSrc" (load)="onImageLoad($event)" />
+        <canvas #imageCanvas class="canvas-image"></canvas>
+        <!-- <ion-col size="6" *ngFor="let photo of photoService.photos; index as position">
+         <ion-img [src]="photo.webviewPath"></ion-img> -->
+        <ng-container *ngIf="message != null">
+          {{message}}
+        </ng-container>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+    <ion-fab-button (click)="addPhotoToGallery()">
+      <ion-icon name="camera"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
