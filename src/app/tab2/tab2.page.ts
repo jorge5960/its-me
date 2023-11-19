@@ -1,10 +1,14 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { PhotoService } from '../services/photo.service';
-import * as faceapi from 'face-api.js';
 import { Photo } from '@capacitor/camera';
+import { File } from '@ionic-native/file/ngx';
 import { Platform } from '@ionic/angular';
-import { File } from '@ionic-native/file';
+import * as faceapi from 'face-api.js';
+import { PhotoService } from '../services/photo.service';
 
+
+var fs = require('fs');
+
+var Buffer = require('buffer/').Buffer;
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
@@ -18,9 +22,9 @@ export class Tab2Page implements OnInit {
   @ViewChild(Platform, { static: false }) content: Platform;
   private ctx: CanvasRenderingContext2D;
   imgSrc: string = '';
-  message: string = null;
+  messages: string[] = [];
 
-  constructor(public photoService: PhotoService,private file:File) { }
+  constructor(public photoService: PhotoService, private file: File) { }
 
   addPhotoToGallery() {
     this.photoService.addNewToGallery().then((photo: Photo) => {
@@ -51,13 +55,13 @@ export class Tab2Page implements OnInit {
   }
 
 
-  async ngOnInit() {
+  ngOnInit() {
     this.loadModels();
   }
 
-  async loadModels(){
+  async loadModels() {
     // set path to load models
-    let filePathRoot = this.file.applicationDirectory + 'www/assets/models/';
+    let filePathRoot = '/assets/models/';
 
     // faceapi settings
     faceapi.env.monkeyPatch({
@@ -65,36 +69,62 @@ export class Tab2Page implements OnInit {
         new Promise(resolve => {
           let fileExtension = filePath.split("?")[0].split(".").pop();
           let fileName = filePath.split("?")[0].split("/").pop();
+          this.messages.push('readFile-> ' + filePathRoot + fileName);
+         // resolve(fs.readFileSync(filePathRoot + fileName));
+          // readFile(filePathRoot + fileName, (error:any,data:Buffer)=>{
+          //   resolve(data);
+          // })
+          fetch(filePathRoot + fileName)
+            .then(response => {
 
-          this.file.resolveLocalFilesystemUrl(filePathRoot + fileName).then((res:any) => {
-            if (res.isFile){
-                if (fileExtension === "json") {
-                  this.file.readAsText(filePathRoot, fileName).then((text:any) => {
-                    resolve(text);
-                  });
-                } else {
-                  this.file.readAsArrayBuffer(filePathRoot, fileName).then((arrayBuffer:any) => {
-                    resolve(new Uint8Array(arrayBuffer));
-                  });
-                }
-            }
-        });
-      }),
-     Canvas: HTMLCanvasElement,
-     Image: HTMLImageElement,
-     ImageData: ImageData,
-     Video: HTMLVideoElement,
-     createCanvasElement: () => document.createElement("canvas"),
-     createImageElement: () => document.createElement("img")
+              if (fileExtension === "json") {
+                this.messages.push('response reading json ');
+                response.json().then( (value:any)=>{
+                  this.messages.push('reading json fin ');
+                  resolve(Buffer.from(JSON.stringify(value)));
+                });
+              } else {
+                this.messages.push('response reading blob ');
+               
+                 response.blob().then( (value:any)=>{
+                  this.messages.push('BLOB INICIO ');
+                  let reader = new FileReader();
+                  reader.onload = () => {
+                    this.messages.push('BLOB FIN ');
+                    resolve(Buffer.from(new Uint32Array(reader.result as any).buffer));
+                  }
+                  reader.readAsBinaryString(value);
+                 
+                });
+              }
+            });
+
+        }),
+      Canvas: HTMLCanvasElement,
+      Image: HTMLImageElement,
+      ImageData: ImageData,
+      Video: HTMLVideoElement,
+      createCanvasElement: () => document.createElement("canvas"),
+      createImageElement: () => document.createElement("img")
     });
 
-    return Promise.all([faceapi.nets.ssdMobilenetv1.loadFromDisk(filePathRoot),
-    faceapi.nets.faceLandmark68Net.loadFromDisk(filePathRoot),
-    faceapi.nets.faceRecognitionNet.loadFromDisk(filePathRoot),
-    faceapi.nets.faceExpressionNet.loadFromDisk(filePathRoot)]).then(() => { }).catch((error: any) => {
-     return true;
+    Promise.all([
+
+      await faceapi.nets.ssdMobilenetv1.loadFromDisk(filePathRoot),
+      await faceapi.nets.faceLandmark68Net.loadFromDisk(filePathRoot),
+      await faceapi.nets.faceRecognitionNet.loadFromDisk(filePathRoot),
+      await faceapi.nets.faceExpressionNet.loadFromDisk(filePathRoot)
+    ]).then(() => {
+      this.messages.push("FIN");
+    }).catch( (error:any)=>{
+      this.messages.push("error");
     });
+    
 
   }
-  
+
+  loader2() {
+
+  }
+
 }

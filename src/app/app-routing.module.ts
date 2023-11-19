@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import * as faceapi from 'face-api.js';
 
 const routes: Routes = [
   {

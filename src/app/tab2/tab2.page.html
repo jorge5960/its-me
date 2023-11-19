@@ -13,8 +13,12 @@
         <canvas #imageCanvas class="canvas-image"></canvas>
         <!-- <ion-col size="6" *ngFor="let photo of photoService.photos; index as position">
          <ion-img [src]="photo.webviewPath"></ion-img> -->
-        <ng-container *ngIf="message != null">
-          {{message}}
+        <ng-container *ngIf="messages != null">
+          <ul>
+            <li *ngFor="let message of messages; index as i">
+              {{i}} --- {{message}}
+            </li>
+          </ul>
         </ng-container>
       </ion-col>
     </ion-row>

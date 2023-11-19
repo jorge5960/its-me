@@ -1,0 +1,9 @@
+
+-- build
+ionic build
+-- añadir android
+ionic cap open android
+-- depurar navegador
+ionic serve
+-- actualizar android studio
+ionic cap sync

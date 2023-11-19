@@ -1,7 +1,8 @@
 {
   "name": "its-me",
   "integrations": {
-    "capacitor": {}
+    "capacitor": {},
+    "cordova": {}
   },
   "type": "angular"
 }

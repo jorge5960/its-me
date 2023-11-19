@@ -30,6 +30,7 @@
     "@capacitor/keyboard": "5.0.6",
     "@capacitor/preferences": "^5.0.6",
     "@capacitor/status-bar": "5.0.6",
+    "@ionic-native/file": "^5.29.0",
     "@ionic/angular": "^7.0.0",
     "@ionic/pwa-elements": "^3.2.2",
     "@tensorflow/tfjs-core": "^4.11.0",
@@ -37,7 +38,6 @@
     "ionicons": "^7.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "whatwg-fetch": "^3.6.19",
     "zone.js": "~0.13.0"
   },
   "devDependencies": {
