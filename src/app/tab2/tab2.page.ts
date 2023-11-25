@@ -1,12 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Photo } from '@capacitor/camera';
-import { File } from '@ionic-native/file/ngx';
+import { File, FileSystem } from '@ionic-native/file/ngx';
 import { Platform } from '@ionic/angular';
 import * as faceapi from 'face-api.js';
 import { PhotoService } from '../services/photo.service';
-
-
-var fs = require('fs');
 
 var Buffer = require('buffer/').Buffer;
 @Component({
@@ -85,15 +82,21 @@ export class Tab2Page implements OnInit {
                 });
               } else {
                 this.messages.push('response reading blob ');
-               
+                
+               //response.arrayBuffer
                  response.blob().then( (value:any)=>{
                   this.messages.push('BLOB INICIO ');
+                 
                   let reader = new FileReader();
                   reader.onload = () => {
-                    this.messages.push('BLOB FIN ');
-                    resolve(Buffer.from(new Uint32Array(reader.result as any).buffer));
+                   // this.messages.push('leidos '+(reader.result as ArrayBuffer).byteLength);
                   }
-                  reader.readAsBinaryString(value);
+                  reader.onloadend = () => {
+                   // this.messages.push('leidos fin '+(reader.result as ArrayBuffer).byteLength);
+                   resolve(new Uint8Array(reader.result as any) as Buffer);
+                    //resolve(Buffer.from(value,'base64'));
+                  }
+                  reader.readAsArrayBuffer(value);
                  
                 });
               }
@@ -123,8 +126,5 @@ export class Tab2Page implements OnInit {
 
   }
 
-  loader2() {
-
-  }
 
 }
