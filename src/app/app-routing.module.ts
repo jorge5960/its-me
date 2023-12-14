@@ -2,10 +2,28 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
+
+  {
+    path: 'home',
+    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
+  },
   {
     path: '',
-    loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
-  }
+    redirectTo: 'home',
+    pathMatch: 'full'
+  },
+  {
+    path: 'welcome',
+    loadChildren: () => import('./welcome/welcome.module').then( m => m.WelcomePageModule)
+  },
+  {
+      path: 'smile',
+      loadChildren: () => import('./smile/smile.module').then(m => m.SmilePageModule)
+  },
+  {
+    path: 'video',
+    loadChildren: () => import('./video/video.module').then(m => m.VideoPageModule)
+}
 ];
 @NgModule({
   imports: [
